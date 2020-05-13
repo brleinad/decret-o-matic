@@ -1,38 +1,57 @@
 /*TODO:
- * game over logic
+ * Deletion of decrees
  * new game menu
  * style stuff better
  * improve grafics
  * generate graphs
  * */
-const ALERT_DECREE_EXISTS = "Decreto esiste gia'!"
-const SUBDECS1 = [
-    "evitate",
-    "non recatevi ne",
-    "recatevi ne",
-    "non rimanete ne",
-    "rimanete ne",
-    "non chiuderemo",
-    "chiuderemo",
-    ];
-const SUBDECS2 = [
-    "i parchi pubblici",
-    "i supermercati",
-    "la propria abitazione",
-    "il luogo di lavoro",
-    "il comune di residenza",
-    "i cantieri",
-    "le scuole",
-    ];
-const SUBDECS3 = [
-    "per esigenze lavorative",
-    "per comprovate necessita'",
-    "in piu' di due persone",
-    "per motivi di salute",
-    "a un metro di distanza",
-    "per produzioni di interesse strategico",
-    "per beni di prima necessita'",
-    ];
+
+
+/* Constants
+ * */
+const config = {
+   "DECREE_BUTTON": "Decreta",
+   "DAY_BUTTON": "Giorno",
+   "DECREE_LIST_TITLE": "Decreti",
+   "DAY_TITLE": "Giorno",
+   "INFECTED_TITLE": "Contagi",
+   "MAX_INFECTED":  500000, 
+   "LAST_DAY": 14,
+   "ALERT_DECREE_EXISTS": "Decreto esiste gia'!",
+   "GAME_OVER": "Game Over!",
+   "LOST_GAME": "Perso",
+   "WON_GAME": "Vinto!",
+   "SUB_DECS": {
+      "SUB_DECS1": [
+         "evitate",
+         "non recatevi ne",
+         "recatevi ne",
+         "non rimanete ne",
+         "rimanete ne",
+         "non chiuderemo",
+         "chiuderemo"
+      ],
+      "SUB_DECS2": [
+         "i parchi pubblici",
+         "i supermercati",
+         "la propria abitazione",
+         "il luogo di lavoro",
+         "il comune di residenza",
+         "i cantieri",
+         "le scuole"
+      ],
+      "SUB_DECS3": [
+         "per esigenze lavorative",
+         "per comprovate necessita'",
+         "in piu' di due persone",
+         "per motivi di salute",
+         "a un metro di distanza",
+         "per produzioni di interesse strategico",
+         "per beni di prima necessita'"
+      ],
+   },
+};
+//const config = JSON.parse(configIT);
 
 /*
  * Helper functions
@@ -52,23 +71,26 @@ function getRandom(min, max) {
 /*
  * Class to represent a single decree made up of sub decrees.
  * */
-function Decree (subDec1, subDec2, subDec3) {
-   this.subDec1 = subDec1;
-   this.subDec2 = subDec2;
-   this.subDec3 = subDec3;
+class Decree  {
+   constructor(subDec1, subDec2, subDec3) {
+      this.subDec1 = subDec1;
+      this.subDec2 = subDec2;
+      this.subDec3 = subDec3;
+      this.infectionFactor = this.getInfectionFactor();
+   }
 
    // Return decree in a string.
-   this.dec2string = () => {
+   dec2string() {
       return `${this.subDec1} ${this.subDec2} ${this.subDec3}`;
    }
 
    // Compare the decree with an array of decrees.
-   this.inDecArray = (decArray) => {
-      for (dec of decArray) {
+   static inDecArray(dec, decArray) {
+      for (let decOfA of decArray) {
          if (
-            this.subDec1 == dec.subDec1
-            && this.subDec2 == dec.subDec2
-            && this.subDec3 == dec.subDec3
+            dec.subDec1 == decOfA.subDec1
+            && dec.subDec2 == decOfA.subDec2
+            && dec.subDec3 == decOfA.subDec3
          ) {
             return true;
          }
@@ -78,7 +100,7 @@ function Decree (subDec1, subDec2, subDec3) {
    }
 
    // Calculate the infection factor used to get the number of infected people per day.
-   this.getInfectionFactor = () => {
+   getInfectionFactor() {
       const max_power = 10.0;
       const fix_power = 2.5;
       const exp_power = 1.5;
@@ -94,9 +116,24 @@ function Decree (subDec1, subDec2, subDec3) {
      return factor
    }
 
-   this.infectionFactor = this.getInfectionFactor();
 }
 
+/*
+ * Initialize the HTML given a language config file\
+ * */
+function setLanguage() {
+   const makeDecButton = document.querySelector('#make-decree');
+   const nextDayButton = document.querySelector('#next-day');
+   const decreesTitle = document.querySelector('#decrees-list-title');
+   const dayTitle = document.querySelector('#day-title');
+   const infectedTitle = document.querySelector('#infected-title');
+
+   makeDecButton.textContent = config.DECREE_BUTTON;
+   nextDayButton.textContent = config.DAY_BUTTON;
+   decreesTitle.textContent = config.DECREE_LIST_TITLE;
+   dayTitle.textContent = config.DAY_TITLE;
+   infectedTitle.textContent = config.INFECTED_TITLE;
+}
 
 /*
  * Initializes all the sub decree options for the three inputs
@@ -119,16 +156,18 @@ function makeDec () {
    const subDec2 = document.querySelector('#subdecree2');
    const subDec3 = document.querySelector('#subdecree3');
    const dec = new Decree(subDec1.value, subDec2.value, subDec3.value);
-   if (dec.inDecArray(validDecs)) {
-      alert(ALERT_DECREE_EXISTS);
+   if (Decree.inDecArray(dec, validDecs)) {
+      alert(config.ALERT_DECREE_EXISTS);
       return;
    }
    validDecs.push(dec);
 
    console.log(validDecs);
    updateValidDecs(dec);
+   actions++;
 
    if (actions >= 3) {
+      actions = 0;
       advanceDay();
    }
 }
@@ -148,6 +187,7 @@ function updateValidDecs (dec) {
  * Advance day to tomorrow.
  * */
 function advanceDay () {
+   let gameLost = false;
    calcInfected();
    console.log('next day with new infected: ' + newInfected);
    if (newInfected > 0) {
@@ -158,6 +198,14 @@ function advanceDay () {
    day++;
    updateInfected();
    updateDay();
+
+   if (day >= config.LAST_DAY) {
+      if (infected >= config.MAX_INFECTED)
+      {
+         gameLost = true;
+      }
+      endGame(gameLost);
+   }
 }
 
 /*
@@ -203,6 +251,19 @@ function sumInfectionFactors () {
 
 
 /*
+ * Call this to end the game.
+ * */
+function endGame (gameLost) {
+   let gameOver = config.GAME_OVER;
+   if (gameLost) {
+      gameOver += ' ' + config.LOST_GAME;
+   }else {
+      gameOver += ' ' + config.WON_GAME;
+   }
+   alert(gameOver);
+}
+
+/*
  * Initialization
  * */
 let validDecs = [];
@@ -212,10 +273,12 @@ let infectionFactor = 0.0;
 let infected = 1;
 let newInfected = 0;
 
+//Initialize HTML
+setLanguage();
 // Initialize all three option lists
-setSubDecOptions('#subdecree1', SUBDECS1);
-setSubDecOptions('#subdecree2', SUBDECS2);
-setSubDecOptions('#subdecree3', SUBDECS3);
+setSubDecOptions('#subdecree1', config.SUB_DECS.SUB_DECS1);
+setSubDecOptions('#subdecree2', config.SUB_DECS.SUB_DECS2);
+setSubDecOptions('#subdecree3', config.SUB_DECS.SUB_DECS3);
 updateInfected();
 updateDay();
 
