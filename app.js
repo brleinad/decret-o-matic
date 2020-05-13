@@ -1,3 +1,10 @@
+/*TODO:
+ * game over logic
+ * new game menu
+ * style stuff better
+ * improve grafics
+ * generate graphs
+ * */
 const ALERT_DECREE_EXISTS = "Decreto esiste gia'!"
 const SUBDECS1 = [
     "evitate",
