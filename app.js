@@ -192,12 +192,15 @@ function advanceDay () {
    console.log('next day with new infected: ' + newInfected);
    if (newInfected > 0) {
       infected += Math.max(Math.floor(newInfected/10), 1);
+      //chartData.push({x: day, y: infected});
+      chartData.push([day, infected]);
    }else {
       reset = true;
    }
    day++;
    updateInfected();
    updateDay();
+   updateGraph();
 
    if (day >= config.LAST_DAY) {
       if (infected >= config.MAX_INFECTED)
@@ -249,7 +252,6 @@ function sumInfectionFactors () {
    return totalFactor;
 }
 
-
 /*
  * Call this to end the game.
  * */
@@ -264,6 +266,53 @@ function endGame (gameLost) {
 }
 
 /*
+ * Update the graph
+ */
+function updateGraph() {
+    //Using Google graphs
+    google.charts.load('current', {packages: ['corechart', 'line']});
+    google.charts.setOnLoadCallback(drawBackgroundColor);
+
+    function drawBackgroundColor() {
+        const data = new google.visualization.DataTable();
+        data.addColumn('number', 'days');
+        data.addColumn('number', 'cases');
+
+        data.addRows(chartData);
+
+        const options = {
+            hAxis: {
+            title: 'Day'
+            },
+            vAxis: {
+            title: 'Cases'
+            },
+            backgroundColor: '#f1f8e9'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart-container'));
+        chart.draw(data, options);
+        }
+    /*
+    // Using CanvasJS
+    let chart = new CanvasJS.Chart("chartContainer", {
+        title: {
+            text: 'Infected'
+        },
+        axisY: {
+            //includeZero: false
+        },
+        data: [{
+            type: 'line',
+            dataPoints: chartData 
+        }]
+    })
+    chart.render();
+    */
+}
+
+
+/*
  * Initialization
  * */
 let validDecs = [];
@@ -271,6 +320,7 @@ let day = 1;
 let actions = 0;
 let infectionFactor = 0.0;
 let infected = 1;
+let chartData = [[1, 1]];
 let newInfected = 0;
 
 //Initialize HTML
@@ -281,6 +331,7 @@ setSubDecOptions('#subdecree2', config.SUB_DECS.SUB_DECS2);
 setSubDecOptions('#subdecree3', config.SUB_DECS.SUB_DECS3);
 updateInfected();
 updateDay();
+updateGraph();
 
 
 /* 
