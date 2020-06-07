@@ -1,56 +1,12 @@
 /*TODO:
+ * Language
  * Deletion of decrees
  * new game menu
- * style stuff better
- * improve grafics
- * generate graphs
  * */
 
 
 /* Constants
  * */
-const config = {
-   "DECREE_BUTTON": "Decreta",
-   "DAY_BUTTON": "Giorno",
-   "DECREE_LIST_TITLE": "Decreti",
-   "DAY_TITLE": "Giorno",
-   "INFECTED_TITLE": "Contagi",
-   "MAX_INFECTED":  500000, 
-   "LAST_DAY": 14,
-   "ALERT_DECREE_EXISTS": "Decreto esiste gia'!",
-   "GAME_OVER": "Game Over!",
-   "LOST_GAME": "Perso",
-   "WON_GAME": "Vinto!",
-   "SUB_DECS": {
-      "SUB_DECS1": [
-         "evitate",
-         "non recatevi ne",
-         "recatevi ne",
-         "non rimanete ne",
-         "rimanete ne",
-         "non chiuderemo",
-         "chiuderemo"
-      ],
-      "SUB_DECS2": [
-         "i parchi pubblici",
-         "i supermercati",
-         "la propria abitazione",
-         "il luogo di lavoro",
-         "il comune di residenza",
-         "i cantieri",
-         "le scuole"
-      ],
-      "SUB_DECS3": [
-         "per esigenze lavorative",
-         "per comprovate necessita'",
-         "in piu' di due persone",
-         "per motivi di salute",
-         "a un metro di distanza",
-         "per produzioni di interesse strategico",
-         "per beni di prima necessita'"
-      ],
-   },
-};
 //const config = JSON.parse(configIT);
 
 /*
@@ -121,18 +77,22 @@ class Decree  {
 /*
  * Initialize the HTML given a language config file\
  * */
-function setLanguage() {
-   const makeDecButton = document.querySelector('#make-decree');
-   const nextDayButton = document.querySelector('#next-day');
-   const decreesTitle = document.querySelector('#decrees-list-title');
-   const dayTitle = document.querySelector('#day-title');
-   const infectedTitle = document.querySelector('#infected-title');
+function loadUI() {
+    const appSection = document.querySelector('#main-app');
+    const langDiv = document.querySelector('#language');
+    const makeDecButton = document.querySelector('#make-decree');
+    const nextDayButton = document.querySelector('#next-day');
+    const decreesTitle = document.querySelector('#decrees-list-title');
+    const dayTitle = document.querySelector('#day-title');
+    const infectedTitle = document.querySelector('#infected-title');
 
-   makeDecButton.textContent = config.DECREE_BUTTON;
-   nextDayButton.textContent = config.DAY_BUTTON;
-   decreesTitle.textContent = config.DECREE_LIST_TITLE;
-   dayTitle.textContent = config.DAY_TITLE;
-   infectedTitle.textContent = config.INFECTED_TITLE;
+    appSection.style.display = "block";
+    langDiv.style.display = "none";
+    makeDecButton.textContent = config.DECREE_BUTTON;
+    nextDayButton.textContent = config.DAY_BUTTON;
+    decreesTitle.textContent = config.DECREE_LIST_TITLE;
+    dayTitle.textContent = config.DAY_TITLE;
+    infectedTitle.textContent = config.INFECTED_TITLE;
 }
 
 /*
@@ -282,10 +242,10 @@ function updateGraph() {
 
         const options = {
             hAxis: {
-            title: 'Day'
+            title: config.DAY_TITLE
             },
             vAxis: {
-            title: 'Cases'
+            title: config.INFECTED_TITLE
             },
             backgroundColor: '#f1f8e9'
         };
@@ -293,6 +253,42 @@ function updateGraph() {
         var chart = new google.visualization.LineChart(document.getElementById('chart-container'));
         chart.draw(data, options);
         }
+}
+
+function loadLanguage(lang) {
+
+    switch (lang) {
+        case 'italiano':
+            config = italianoConfig;
+            break;
+        case 'français':
+            config = francaisConfig;
+            break;
+        case 'english':
+            config = englishConfig;
+            break;
+    }
+    loadApp(config);
+}
+
+function chooseLanguage() {
+    const languages = ['Italiano', 'Français', 'English']
+    for (let lang of languages) {
+        lang = lang.toLowerCase();
+        const langOption = document.createElement('button');
+        langOption.setAttribute('href', lang);
+        langOption.setAttribute('id', lang);
+        langOption.setAttribute('type', 'button');
+        langOption.setAttribute('class', 'button');
+        langOption.textContent = lang;
+        document.querySelector('#language').appendChild(langOption);
+        langOption.addEventListener('click', event => { loadLanguage(lang)});
+    }
+
+
+
+    console.log('Choosing lang')
+    return "it";
 }
 
 
@@ -306,17 +302,21 @@ let infectionFactor = 0.0;
 let infected = 1;
 let chartData = [[1, 1]];
 let newInfected = 0;
+let config = {};
 
-//Initialize HTML
-setLanguage();
-// Initialize all three option lists
-setSubDecOptions('#subdecree1', config.SUB_DECS.SUB_DECS1);
-setSubDecOptions('#subdecree2', config.SUB_DECS.SUB_DECS2);
-setSubDecOptions('#subdecree3', config.SUB_DECS.SUB_DECS3);
-updateInfected();
-updateDay();
-updateGraph();
+const lang = chooseLanguage();
 
+function loadApp() {
+    //Initialize HTML
+    loadUI();
+    // Initialize all three option lists
+    setSubDecOptions('#subdecree1', config.SUB_DECS.SUB_DECS1);
+    setSubDecOptions('#subdecree2', config.SUB_DECS.SUB_DECS2);
+    setSubDecOptions('#subdecree3', config.SUB_DECS.SUB_DECS3);
+    updateInfected();
+    updateDay();
+    updateGraph();
+}
 
 /* 
  * All the Event listeners

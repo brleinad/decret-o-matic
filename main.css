@@ -9,6 +9,11 @@ nav {
 main-title {
     text-align: center;
 }
+
+#main-app {
+    display: none;
+}
+
 /*
 .container {
    flex-flow: column wrap;
