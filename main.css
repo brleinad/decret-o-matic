@@ -2,6 +2,13 @@ html,
 body {
 }
 
+nav {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+main-title {
+    text-align: center;
+}
 /*
 .container {
    flex-flow: column wrap;

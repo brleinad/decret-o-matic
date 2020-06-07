@@ -293,22 +293,6 @@ function updateGraph() {
         var chart = new google.visualization.LineChart(document.getElementById('chart-container'));
         chart.draw(data, options);
         }
-    /*
-    // Using CanvasJS
-    let chart = new CanvasJS.Chart("chartContainer", {
-        title: {
-            text: 'Infected'
-        },
-        axisY: {
-            //includeZero: false
-        },
-        data: [{
-            type: 'line',
-            dataPoints: chartData 
-        }]
-    })
-    chart.render();
-    */
 }
 
 

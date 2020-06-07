@@ -1,80 +1,83 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <link rel="stylesheet" href="main.css">
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Decret-O-Matic</title>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+    <link rel="stylesheet" href="./main.css">
   </head>
   <body>
     <header>
+      <nav class="level is-mobile">
+        <h1 class="level-item">Decret-O-Matic</h1>
+        <div class="level-item">
+          <div>
+            <p class="heading" id="day-title"></p>
+            <p class="title" id="day"></p>
+          </div>
+        </div>
+        <div class="level-item">
+          <div>
+            <p class="heading" id="infected-title"></p>
+            <p class="title" id="infected"></p>
+          </div>
+        </div>
+      </nav>
     </header>
 
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <h1>Decret-O-Matic</h1>
+    <section class="container">
+
+      <div class="columns">
+        <div class="column">
+          <div class="select">
+            <label for="subdecree1"></label>
+            <select class="custom-select" id="subdecree1">
+            </select>
+          </div>
+
+          <div class="select">
+            <label for="subdecree2"></label>
+            <select class="custom-select" id="subdecree2">
+            </select>
+          </div>
+
+          <div class="select">
+            <label for="subdecree3"></label>
+            <select class="custom-select" id="subdecree3">
+            </select>
+          </div>
         </div> 
+      </div>
+
+
+      <div class="column">
+        <button type="button" class="button is-primary" id="make-decree"></button>
+        <button type="button" class="button is-info" id="next-day"></button>
       </div> 
 
-      <div class="row">
-        <div class="col">
-          <label for="subdecree1"></label>
-          <select class="custom-select" id="subdecree1">
-          </select>
+    </div><!--columns-->
 
-          <label for="subdecree2"></label>
-          <select class="custom-select" id="subdecree2">
-          </select>
-
-          <label for="subdecree3"></label>
-          <select class="custom-select" id="subdecree3">
-          </select>
-        </div> 
-      </div> 
-
-      <div class="row">
-        <div class="col">
-          <button type="button" class="btn btn-success" id="make-decree"></button>
-          <button type="button" class="btn btn-primary" id="next-day"></button>
-        </div> 
-      </div> 
-
-      <div class="row">
-        <div class="col">
-          <table class="table table-dark">
-            <tbody>
-              <tr>
-                <th scope="row" id="day-title"></th>
-                <td id="day"></td>
-              </tr>
-              <tr>
-                <th scope="row" id="infected-title"></th>
-                <td id="infected"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div> 
-      </div> 
-
-      <div class="row">
-        <div class="col">
+      <div class="columns">
+        <div class="column">
           <h2 id="decrees-list-title"></h2>
           <ul id="valid-decrees" class="list-group">
           </ul>
         </div> 
       </div> 
 
-      <div class="row">
-        <div class="col">
+      <div class="columns">
+        <div class="column">
           <div id="chart-container">
           </div>
-          </div>
-        </div> 
+        </div>
       </div> 
+
+    </section>
 
       <!--<script src="it.json" type="text/javascript"></script>-->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <!--<script src="canvasjs.min.js" type="text/javascript"></script>-->
     <script src="app.js" type="text/javascript"></script>
   </body>
 </html>
